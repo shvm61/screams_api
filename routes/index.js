@@ -9,5 +9,7 @@ router.get("/", (req, res) => {
     msg: "hello",
   });
 });
+router.use("/scream", require("./scream"));
+router.use("/screams", require("./screams.js"));
 
 module.exports = router;
