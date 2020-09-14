@@ -11,5 +11,6 @@ router.get("/", (req, res) => {
 });
 router.use("/scream", require("./scream"));
 router.use("/screams", require("./screams.js"));
+router.use("/users", require("./users.js"));
 
 module.exports = router;
