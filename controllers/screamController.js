@@ -2,7 +2,11 @@ const Screams = require("../models/screams");
 
 module.exports.createScream = async (req, res) => {
   try {
-    let scream = await Screams.create(req.body);
+    console.log(req.body);
+    let scream = await Screams.create({
+      userHandle: req.user.handle,
+      body: req.body.body,
+    });
     return res.status(200).json({
       response: "success",
       msg: "successfully created",
