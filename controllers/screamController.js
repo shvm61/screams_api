@@ -8,14 +8,14 @@ module.exports.createScream = async (req, res) => {
       body: req.body.body,
     });
     return res.status(200).json({
-      response: "success",
-      msg: "successfully created",
+      success: true,
+      message: "successfully created",
       id: scream._id,
     });
   } catch (err) {
     console.log("error", err);
     return res.status(500).json({
-      msg: "error",
+      success: false,
       error: err,
     });
   }

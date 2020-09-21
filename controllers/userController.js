@@ -23,6 +23,7 @@ module.exports.signUp = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRY,
     });
     return res.status(201).json({
+      success: true,
       token,
     });
   } catch (err) {
@@ -31,18 +32,20 @@ module.exports.signUp = async (req, res) => {
       const handle = err.keyValue.handle;
       if (handle) {
         return res.status(400).json({
+          success: false,
           handle: "this handle is already taken",
         });
       }
       const email = err.keyValue.email;
       if (email) {
         return res.status(400).json({
+          success: false,
           email: "this email is already taken",
         });
       }
     }
     return res.status(500).json({
-      msg: "error",
+      success: false,
       error: err,
     });
   }
@@ -61,12 +64,12 @@ module.exports.login = async (req, res) => {
     if (!user) {
       return res
         .status(422)
-        .json({ response: "failed", msg: "Inavlid username or password" });
+        .json({ success: false, error: "Inavlid username or password" });
     }
     const match = await bcrypt.compare(req.body.password, user.password);
     if (match)
       return res.status(200).json({
-        response: "success",
+        success: true,
         message: "Sign in successful, here is your token, please keep it safe!",
         data: {
           token: jwt.sign(user.toJSON(), process.env.JWT_KEY, {
@@ -77,10 +80,10 @@ module.exports.login = async (req, res) => {
     else {
       return res
         .status(422)
-        .json({ response: "failed", msg: "Inavlid username or password" });
+        .json({ success: false, error: "Inavlid username or password" });
     }
   } catch (err) {
     console.log("error", err);
-    return res.status(500).json({ response: "failed", error: err });
+    return res.status(500).json({ success: false, error: err });
   }
 };

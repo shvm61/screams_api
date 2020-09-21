@@ -12,10 +12,10 @@ module.exports.getAllScreams = async (req, res) => {
         createdAt: el.createdAt,
       });
     });
-    return res.status(200).json(screams);
+    return res.status(200).json({ success: true, screams });
   } catch (err) {
     return res.status(500).json({
-      msg: "error",
+      success: false,
       error: err,
     });
   }
