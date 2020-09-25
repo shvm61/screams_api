@@ -15,8 +15,9 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   userController.addUserDetails
 );
+router.get("/:handle", userController.getUserDetails);
 router.post("/signup", userController.signUp);
-router.get("/login", userController.login);
+router.post("/login", userController.login);
 router.post(
   "/image",
   [

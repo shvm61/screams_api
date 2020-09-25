@@ -62,7 +62,7 @@ module.exports.commentOnScream = async (req, res) => {
     if (req.body.body.trim() === "")
       return res
         .status(400)
-        .json({ success: false, error: "Must not be empty" });
+        .json({ success: false, comment: "Must not be empty" });
 
     let scream = await Screams.findById(req.params.id);
     if (!scream) {

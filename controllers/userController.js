@@ -4,6 +4,8 @@ const validator = require("validator");
 const path = require("path");
 const User = require("../models/user");
 const Likes = require("../models/like");
+const Users = require("../models/user");
+const Screams = require("../models/screams");
 const saltRounds = 10;
 
 module.exports.signUp = async (req, res) => {
@@ -137,7 +139,7 @@ function reduceUserDetails(data) {
 module.exports.addUserDetails = async (req, res) => {
   try {
     let userDeatils = reduceUserDetails(req.body);
-    console.log("userDetails", userDeatils);
+    // console.log("userDetails", userDeatils);
     const user = await User.findByIdAndUpdate(req.user._id, { ...userDeatils });
     return res.json({
       success: true,
@@ -161,6 +163,31 @@ module.exports.getUserInfo = async (req, res) => {
     const likes = await Likes.find({ userHandle: req.user.handle });
     userData.likes = likes;
     res.status(200).json(userData);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ success: false, error });
+  }
+};
+
+module.exports.getUserDetails = async (req, res) => {
+  try {
+    let user = await Users.find({ handle: req.params.handle }).select(
+      "-password"
+    );
+    if (!user) {
+      return res.status().json({ success: false, error: "User not found" });
+    }
+    user = user[0];
+    let userData = {};
+    userData.user = user;
+    let screams = await Screams.find({ userHandle: req.params.handle }).sort(
+      "-createdAt"
+    );
+    userData.screams = screams;
+    res.status(200).json({
+      success: true,
+      ...userData,
+    });
   } catch (error) {
     console.log("error", error);
     return res.status(500).json({ success: false, error });
