@@ -10,6 +10,12 @@ const screamsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    likeCount: {
+      type: Number,
+    },
+    commentCount: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

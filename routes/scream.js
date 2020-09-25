@@ -8,5 +8,10 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   screamsController.createScream
 );
-
+router.get("/:id", screamsController.getScream);
+router.post(
+  "/:id/comment",
+  passport.authenticate("jwt", { session: false }),
+  screamsController.commentOnScream
+);
 module.exports = router;
