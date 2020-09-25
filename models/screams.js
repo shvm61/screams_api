@@ -16,6 +16,9 @@ const screamsSchema = new mongoose.Schema(
     commentCount: {
       type: Number,
     },
+    userImage: {
+      type: String,
+    },
   },
   {
     timestamps: true,
