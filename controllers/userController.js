@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const path = require("path");
 const User = require("../models/user");
-const Likes = require("../models/likes");
+const Likes = require("../models/like");
 const saltRounds = 10;
 
 module.exports.signUp = async (req, res) => {
@@ -20,7 +20,10 @@ module.exports.signUp = async (req, res) => {
     let hash = await bcrypt.hash(req.body.password, saltRounds);
     req.body.password = hash;
     let user = await User.create(req.body);
-    let token = jwt.sign(user.toJSON(), process.env.JWT_KEY, {
+    user = user.toObject();
+    delete user.password;
+    // console.log(user);
+    let token = jwt.sign(user, process.env.JWT_KEY, {
       expiresIn: process.env.JWT_EXPIRY,
     });
     return res.status(201).json({
@@ -68,15 +71,17 @@ module.exports.login = async (req, res) => {
         .json({ success: false, error: "Inavlid username or password" });
     }
     const match = await bcrypt.compare(req.body.password, user.password);
-    if (match)
+    if (match) {
+      user = user.toObject();
+      delete user.password;
       return res.status(200).json({
         success: true,
         message: "Sign in successful, here is your token, please keep it safe!",
-        token: jwt.sign(user.toJSON(), process.env.JWT_KEY, {
+        token: jwt.sign(user, process.env.JWT_KEY, {
           expiresIn: process.env.JWT_EXPIRY,
         }),
       });
-    else {
+    } else {
       return res
         .status(422)
         .json({ success: false, error: "Inavlid username or password" });
@@ -147,9 +152,13 @@ module.exports.addUserDetails = async (req, res) => {
 module.exports.getUserInfo = async (req, res) => {
   try {
     let userData = {};
-    const user = await User.findById(req.user._id);
+    let user = await User.findById(req.user._id);
+    user = user.toObject();
+    delete user.password;
+    // console.log("user", user);
+
     userData.credentials = user;
-    const likes = await likes.find({ userHandle: req.user.handle });
+    const likes = await Likes.find({ userHandle: req.user.handle });
     userData.likes = likes;
     res.status(200).json(userData);
   } catch (error) {
